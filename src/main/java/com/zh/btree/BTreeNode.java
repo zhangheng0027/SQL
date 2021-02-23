@@ -5,6 +5,10 @@ import lombok.Setter;
 
 public class BTreeNode<T extends Comparable<T>> {
     
+    // 是否是叶子节点
+    @Getter @Setter
+    private boolean leaf;
+
     @Getter
     private int size;
 
@@ -64,4 +68,17 @@ public class BTreeNode<T extends Comparable<T>> {
 
         return null;
     }
+
+    /**
+     * 返回和目标值最接近的节点
+     * @param t
+     * @return
+     */
+	protected DataNode<T> find(T t) {
+        if (leaf) {
+            return headNode.getDataNode().find(t);
+        }
+        return headNode.getIndexNode().find(t);
+
+	}
 }

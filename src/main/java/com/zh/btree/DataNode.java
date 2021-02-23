@@ -41,4 +41,15 @@ public class DataNode<T extends Comparable<T>> extends Node<T> {
         dn.leftDataNode = this;
     }
 
+	public DataNode<T> find(T t) {
+        if (t.compareTo(super.getData()) < 0) {
+            if (null == this.leftDataNode)
+                return this;
+            return this.leftDataNode;
+        }
+        if (null == this.rightDataNode)
+            return this;
+		return this.rightDataNode.find(t);
+	}
+
 }

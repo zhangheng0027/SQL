@@ -25,4 +25,10 @@ public abstract class Node<T extends Comparable<T>> {
         throw new Error();
     }
 
+    @Override
+    public String toString() {
+        return data.toString();
+    }
+
+	
 }

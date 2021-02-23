@@ -13,7 +13,6 @@ public class BTree<T extends Comparable<T>> {
     private int size;
 
     public DataNode<T> find(T t) {
-
-        return null;
+        return root.find(t);
     }
 }
