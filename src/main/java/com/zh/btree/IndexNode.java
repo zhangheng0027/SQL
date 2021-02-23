@@ -24,18 +24,45 @@ public class IndexNode<T extends Comparable<T>> extends Node<T> {
     /**
      * 在本节点左边增加节点
      */
-    public void addLeftIndex(IndexNode<T> le) {
+    public void addLeftIndex(IndexNode<T> le, BTreeNode<T> btrNode) {
+        
+        BTreeNode<T> leftTempBTN = this.btNode;
+        this.btNode = btrNode;
+        le.btNode = leftTempBTN;
+    
+        leftTempBTN.setRightIndex(le);
+        btrNode.setRightIndex(this);
+        btrNode.setLeftIndex(le);
+
         if (null == this.previous) {
 
+            le.next = this;
+            le.previous = null;
+            this.previous = le;
+
+            super.getRoom().setHeadNode(le);
         } else {
+            IndexNode<T> leftTempInd = this.previous;
+
+            leftTempInd.next = le;
+            le.next = this;
+
+            this.previous = le;
+            le.previous = leftTempInd;
+
         }
     }
 
-    public void addRightIndex(IndexNode<T> re, BTreeNode<T> btNode) {
-        // 该节点为最右边的节点
-        if (null == this.next) {
-
+    /**
+     * 正常情况调用 {@link IndexNode#addLeftIndex(IndexNode, BTreeNode)}
+     * @param re
+     * @param btrNode
+     */
+    public void addRightIndex(IndexNode<T> re, BTreeNode<T> btrNode) {
+        if (null != this.next) {
+            throw new Error();
         }
+        
     }
 
     public void setBtNode(BTreeNode<T> b) {
