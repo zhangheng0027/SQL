@@ -25,22 +25,9 @@ public class IndexNode<T extends Comparable<T>> extends Node<T> {
      * 在本节点左边增加节点
      */
     public void addLeftIndex(IndexNode<T> le) {
-        // 该节点是最左边的节点
-        IndexNode<T> temp = this.previous;
-        le.previous = temp;
-        this.previous = le;
-        le.next = this;
+        if (null == this.previous) {
 
-
-        btNode.setLeftIndex(le);
-        le.btNode.setLeftIndex(temp);
-        // TODO a
-        if (null == temp) {
         } else {
-            temp.next = le;
-
-            temp.next = le;
-            le.next = this;
         }
     }
 
