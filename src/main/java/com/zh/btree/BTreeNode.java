@@ -7,7 +7,7 @@ public class BTreeNode<T extends Comparable<T>> {
     
     // 是否是叶子节点
     @Getter @Setter
-    private boolean leaf;
+    private boolean leaf = false;
 
     @Getter
     private int size;
@@ -64,8 +64,88 @@ public class BTreeNode<T extends Comparable<T>> {
             temp = temp.getRightDataNode();
         }
         newBtreeNode.setHeadNode(centreTemp);
+        IndexNode<T> iNode = new IndexNode<>(centreTemp.getData());
 
+        if (floor == 0) {
+            BTreeNode<T> root = new BTreeNode<>();
+            root.increase();
+            root.setHeadNode(iNode);
+            iNode.setRoom(root);
 
+            iNode.setBtNode(this);
+            this.rightIndex = iNode;
+
+            root.setEndBTreeNode(newBtreeNode);
+            newBtreeNode.setLeftIndex(iNode);
+
+            return root;
+        }
+
+        if (null == this.rightIndex) {
+            return this.leftIndex.addRightIndex(iNode, newBtreeNode, maxDegree, floor - 1);
+        } else {
+            return this.rightIndex.addLeftIndex(iNode, newBtreeNode, maxDegree, floor - 1);
+        }
+    }
+
+    /**
+     * 分裂节点
+     * @param maxDegree
+     * @param floor
+     */
+    public BTreeNode<T> diviesionIndNode(int maxDegree, int floor) {
+        if (maxDegree > size)
+            return null;
+
+        int centre = size >> 1;
+        size = centre;
+
+        BTreeNode<T> newBTreeNode = new BTreeNode<>();
+        IndexNode<T> temp = this.headNode.getIndexNode();
+        while (centre-- > 0)
+            temp = temp.getNext();
+
+        final IndexNode<T> centretemp = temp;
+        
+        temp = temp.getNext();
+        newBTreeNode.setHeadNode(temp);
+        while (null != temp && temp.getRoom() == this) {
+            newBTreeNode.increase();
+            temp.setRoom(newBTreeNode);
+            temp = temp.getNext();
+        }
+
+        newBTreeNode.setEndBTreeNode(this.getEndBTreeNode());
+
+        this.setEndBTreeNode(centretemp.getBtNode());
+        centretemp.getBtNode().setRightIndex(null);
+
+        centretemp.getPrevious().setNext(null);
+        centretemp.setPrevious(null);
+
+        final IndexNode<T> newHead = newBTreeNode.headNode.getIndexNode();
+        newHead.getBtNode().setLeftIndex(null);
+
+        centretemp.getNext().setPrevious(null);
+        centretemp.setNext(null);
+
+        if (floor == 0) {
+            BTreeNode<T> root = new BTreeNode<>();
+            root.increase();
+            root.setHeadNode(centretemp);
+            root.setEndBTreeNode(newBTreeNode);
+            centretemp.setBtNode(this);
+            
+            this.setRightIndex(centretemp);
+            newBTreeNode.setLeftIndex(centretemp);
+            return root;
+        }
+
+        if (null == this.rightIndex) {
+            this.leftIndex.addRightIndex(centretemp, newBTreeNode, maxDegree, floor - 1);
+        } else {
+            this.rightIndex.addLeftIndex(centretemp, newBTreeNode, maxDegree, floor - 1);
+        }
         return null;
     }
 
@@ -75,10 +155,6 @@ public class BTreeNode<T extends Comparable<T>> {
      * @return
      */
 	protected DataNode<T> find(T t) {
-        if (leaf) {
-            return headNode.getDataNode().find(t);
-        }
-        return headNode.getIndexNode().find(t);
-
+        return headNode.find(t);
 	}
 }

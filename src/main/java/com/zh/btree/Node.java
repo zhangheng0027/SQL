@@ -6,6 +6,10 @@ import lombok.Setter;
 
 public abstract class Node<T extends Comparable<T>> {
     
+    public Node(T t) {
+        this.data = t;
+    }
+
     @Setter @Getter @NonNull
     private T data;
 
@@ -30,5 +34,5 @@ public abstract class Node<T extends Comparable<T>> {
         return data.toString();
     }
 
-	
+	abstract protected DataNode<T> find(T t);
 }

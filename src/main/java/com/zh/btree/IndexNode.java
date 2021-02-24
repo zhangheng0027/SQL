@@ -1,18 +1,24 @@
 package com.zh.btree;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public class IndexNode<T extends Comparable<T>> extends Node<T> {
     
-    @Getter
+    @Getter @Setter
     private IndexNode<T> next;
 
-    @Getter
+    @Getter @Setter
     private IndexNode<T> previous;
 
     // 记录
     @Getter
     private BTreeNode<T> btNode;
+
+    public IndexNode(T t) {
+        super(t);
+    }
+
 
     public BTreeNode<T> getNextBTreeNode() {
         if (null == next) {
@@ -24,8 +30,11 @@ public class IndexNode<T extends Comparable<T>> extends Node<T> {
     /**
      * 在本节点左边增加节点
      */
-    public void addLeftIndex(IndexNode<T> le, BTreeNode<T> btrNode) {
+    public BTreeNode<T> addLeftIndex(IndexNode<T> le, BTreeNode<T> btrNode, int maxDegree, int floor) {
         
+        super.getRoom().increase();
+        le.setRoom(this.getRoom());
+
         BTreeNode<T> leftTempBTN = this.btNode;
         this.btNode = btrNode;
         le.btNode = leftTempBTN;
@@ -49,8 +58,9 @@ public class IndexNode<T extends Comparable<T>> extends Node<T> {
 
             this.previous = le;
             le.previous = leftTempInd;
-
         }
+
+        return super.getRoom().diviesionIndNode(maxDegree, floor);
     }
 
     /**
@@ -58,11 +68,25 @@ public class IndexNode<T extends Comparable<T>> extends Node<T> {
      * @param re
      * @param btrNode
      */
-    public void addRightIndex(IndexNode<T> re, BTreeNode<T> btrNode) {
+    public BTreeNode<T> addRightIndex(IndexNode<T> re, BTreeNode<T> btrNode, int maxDegree, int floor) {
         if (null != this.next) {
             throw new Error();
         }
+        super.getRoom().increase();
+        re.setRoom(this.getRoom());
+
+        final BTreeNode<T> tempDataNode = super.getRoom().getEndBTreeNode();
+        re.btNode = tempDataNode;
+        super.getRoom().setEndBTreeNode(btrNode);
+
+        btrNode.setLeftIndex(re);
+        tempDataNode.setRightIndex(re);
+
+        this.next = re;
+        re.next = null;
+        re.previous = this;
         
+        return super.getRoom().diviesionIndNode(maxDegree, floor);
     }
 
     public void setBtNode(BTreeNode<T> b) {
@@ -70,7 +94,7 @@ public class IndexNode<T extends Comparable<T>> extends Node<T> {
         this.btNode.setRightIndex(this);
     }
 
-	public DataNode<T> find(T t) {
+	protected DataNode<T> find(T t) {
         final int com = t.compareTo(super.getData());
         if (com < 0)
             return btNode.find(t);
