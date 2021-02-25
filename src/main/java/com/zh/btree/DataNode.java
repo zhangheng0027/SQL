@@ -56,4 +56,7 @@ public class DataNode<T extends Comparable<T>> extends Node<T> {
 		return this.rightDataNode.find(t);
 	}
 
+    protected Node<T> next() {
+        return this.rightDataNode;
+    }
 }

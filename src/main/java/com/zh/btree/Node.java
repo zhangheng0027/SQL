@@ -35,4 +35,6 @@ public abstract class Node<T extends Comparable<T>> {
     }
 
 	abstract protected DataNode<T> find(T t);
+
+    abstract protected Node<T> next();
 }

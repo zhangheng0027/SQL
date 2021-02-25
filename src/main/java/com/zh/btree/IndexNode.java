@@ -103,4 +103,8 @@ public class IndexNode<T extends Comparable<T>> extends Node<T> {
 		return this.next.find(t);
 	}
 
+    protected Node<T> next() {
+        return this.next;
+    }
+
 }

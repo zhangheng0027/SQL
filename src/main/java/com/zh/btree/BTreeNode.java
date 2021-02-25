@@ -157,4 +157,20 @@ public class BTreeNode<T extends Comparable<T>> {
 	protected DataNode<T> find(T t) {
         return headNode.find(t);
 	}
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer(200);
+        if (leaf) {
+            sb.append("data : ");
+        } else {
+            sb.append("index : ");
+        }
+        Node<T> temp = this.headNode;
+        while (null != temp && temp.getRoom() == this) {
+            sb.append(" " + temp.toString());
+            temp = temp.next();
+            
+        }
+        return sb.toString();
+    }
 }
