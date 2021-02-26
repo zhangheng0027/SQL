@@ -1,5 +1,8 @@
 package com.zh.btree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,10 +31,12 @@ public class BTree<T extends Comparable<T>> {
 
     public static void main(String[] args) {
         BTree<Integer> btree = new BTree<>(3);
-        for (int i = 1; i < 20; i++) {
+        for (int i = 20; i > 0; i--) {
             btree.add(i);
             System.out.println(i + " " + btree.root.getHeadNode().toString());
         }
+        System.out.println(btree.root);
+        System.out.println(btree.disPlay());
     }
 
     /**
@@ -74,5 +79,27 @@ public class BTree<T extends Comparable<T>> {
             floor++;
         }
         return true;
+    }
+
+    public String disPlay() {
+        if (size <= 1)
+            return this.root + "";
+        List<BTreeNode<T>> lb = new ArrayList<>(size);
+        StringBuffer sb = new StringBuffer(size << 4);
+        lb.add(this.root);
+        for (int i = 0; i < lb.size(); i++) {
+            BTreeNode<T> btn = lb.get(i);
+            sb.append("{ " + btn.toString() + " }, ");
+            if (btn.isLeaf()) {
+                continue;
+            }
+            IndexNode<T> temp = btn.getHeadNode().getIndexNode();
+            while (null != temp && temp.getRoom() == btn) {
+                lb.add(temp.getBtNode());
+                temp = temp.getNext();
+            }
+            lb.add(btn.getEndBTreeNode());
+        }
+        return sb.toString();
     }
 }

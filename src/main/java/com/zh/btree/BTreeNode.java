@@ -53,6 +53,7 @@ public class BTreeNode<T extends Comparable<T>> {
 
         // final Node<T> headTemp = this.headNode;
         final BTreeNode<T> newBtreeNode = new BTreeNode<>();
+        newBtreeNode.setLeaf(true);
         DataNode<T> temp = this.headNode.getDataNode();
         while (centre-- > 0) {
             temp = temp.getRightDataNode();
@@ -133,20 +134,21 @@ public class BTreeNode<T extends Comparable<T>> {
             BTreeNode<T> root = new BTreeNode<>();
             root.increase();
             root.setHeadNode(centretemp);
+            centretemp.setRoom(root);
+
             root.setEndBTreeNode(newBTreeNode);
             centretemp.setBtNode(this);
-            
+
             this.setRightIndex(centretemp);
             newBTreeNode.setLeftIndex(centretemp);
             return root;
         }
 
         if (null == this.rightIndex) {
-            this.leftIndex.addRightIndex(centretemp, newBTreeNode, maxDegree, floor - 1);
+            return this.leftIndex.addRightIndex(centretemp, newBTreeNode, maxDegree, floor - 1);
         } else {
-            this.rightIndex.addLeftIndex(centretemp, newBTreeNode, maxDegree, floor - 1);
+            return this.rightIndex.addLeftIndex(centretemp, newBTreeNode, maxDegree, floor - 1);
         }
-        return null;
     }
 
     /**
